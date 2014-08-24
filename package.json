@@ -1,0 +1,35 @@
+{
+  "name": "along-the-way",
+  "version": "1.0.0",
+  "description": "Team project for Code Fellow's Full-Stack Javascript Dev Accelerator.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MongoChaiBackularYeoxpress/along-the-way.git"
+  },
+  "author": "Jordan Buckley, Chey Yeary, Joe Straume, Matthew Clise, Brett McCaffray",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MongoChaiBackularYeoxpress/along-the-way/issues"
+  },
+  "homepage": "https://github.com/MongoChaiBackularYeoxpress/along-the-way",
+  "dependencies": {
+    "backbone": "^1.1.2",
+    "express": "^4.8.5",
+    "jquery": "^2.1.1"
+  },
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "debowerify": "^0.8.1",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^2.1.4",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-copy": "^0.5.0",
+    "handlebars": "^2.0.0-alpha.4",
+    "hbsfy": "^2.0.0",
+    "mocha": "^1.21.4"
+  }
+}
