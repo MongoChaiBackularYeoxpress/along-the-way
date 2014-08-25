@@ -1,5 +1,8 @@
 module.exports = function(grunt){
-	require('matchdep').filterdev('grunt-*').foreach(grunt.loadnpmtasks)
+	//require('matchdep').filterdev('grunt-*').foreach(grunt.loadNpmTasks);
+	grunt.loadNpmTasks('grunt-contrib-clean');
+	grunt.loadNpmTasks('grunt-contrib-copy');
+	grunt.loadNpmTasks('grunt-browserify');
 
 	grunt.initConfig({
 		clean: {
@@ -29,4 +32,4 @@ module.exports = function(grunt){
 	});
 
 	grunt.registerTask('build:dev', ['clean:dev', 'browserify:dev', 'copy:dev']);
-}
+};
