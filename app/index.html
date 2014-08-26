@@ -10,19 +10,72 @@
         margin: 0px;
         padding: 0px
       }
+      #panel {
+        position: absolute;
+        top: 5px;
+        left: 50%;
+        margin-left: -180px;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+      }
+    </style>
+    <style>
+      #directions-panel {
+        height: 100%;
+        float: right;
+        width: 390px;
+        overflow: auto;
+      }
+
+      #map-canvas {
+        margin-right: 400px;
+      }
+
+      #control {
+        background: #fff;
+        padding: 5px;
+        font-size: 14px;
+        font-family: Arial;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 2px rgba(33, 33, 33, 0.4);
+        display: none;
+      }
+
+      @media print {
+        #map-canvas {
+          height: 500px;
+          margin: 0;
+        }
+
+        #directions-panel {
+          float: none;
+          width: auto;
+        }
+      }
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
 
     <script>
       var map;
       var marker;
+      var directionsDisplay;
+      var directionsService = new google.maps.DirectionsService();
 
       function initialize() {
+        directionsDisplay = new google.maps.DirectionsRenderer();
         var mapOptions = {
           zoom: 15,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+        directionsDisplay.setMap(map);
+        directionsDisplay.setPanel(document.getElementById('directions-panel'));
+        var control = document.getElementById('control');
+        control.style.display = 'block';
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(control);
 
         var acOptions = {
           types: ['establishment']
@@ -32,8 +85,12 @@
         if(navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position) {
 
+            var autocompleteStart = new google.maps.places.Autocomplete(document.getElementById('start'),acOptions);
+            var autocompleteEnd = new google.maps.places.Autocomplete(document.getElementById('end'),acOptions);
             var autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'),acOptions);
             autocomplete.bindTo('bounds',map);
+            autocompleteStart.bindTo('bounds',map);
+            autocompleteEnd.bindTo('bounds',map);
             var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             map.setCenter(pos);
 
@@ -66,6 +123,14 @@
             };
             var markerPlace = new google.maps.Marker(markerOptionsPlace);
             markerPlace.setMap(map);
+            markerPlace.setVisible(false);
+
+            var markerOptionsEnd = {
+              icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+            }
+            var markerEnd = new google.maps.Marker(markerOptionsEnd);
+            markerEnd.setMap(map);
+            markerEnd.setVisible(false);
 
             //Shows info window when current position marker is clicked
             google.maps.event.addListener(markerMyPos, 'click', function(e) {
@@ -82,11 +147,52 @@
                 map.setCenter(place.geometry.location);
                 map.setZoom(15);
               }
-              markerPlace.setPosition(place.geometry.location);   //Moves the places marker
+              markerPlace.setPosition(place.geometry.location) //Moves the places marker
+              markerPlace.setVisible(true);   //Places marker now shows up on map
               infoWindow.setContent('<div><strong>' + place.name + '</strong><br>');
               infoWindow.open(map, markerPlace);
               google.maps.event.addListener(markerPlace, 'click', function(e) {
+                infoWindow.setContent('<div><strong>' + place.name + '</strong><br>');
                 infoWindow.open(map, markerPlace);
+              });
+            });
+
+            //Shows marker and info window when user enters starting location
+            google.maps.event.addListener(autocompleteStart, 'place_changed', function() {
+              infoWindow.close();
+              var place = autocompleteStart.getPlace();
+              if (place.geometry.viewport) {
+                map.fitBounds(place.geometry.viewport);
+              } else {
+                map.setCenter(place.geometry.location);
+                map.setZoom(15);
+              }
+              markerMyPos.setPosition(place.geometry.location);   //Moves the places marker
+              infoWindow.setContent('<div><strong>' + place.name + '</strong><br>');
+              infoWindow.open(map, markerMyPos);
+              google.maps.event.addListener(markerMyPos, 'click', function(e) {
+                infoWindow.setContent('<div><strong>' + place.name + '</strong><br>');
+                infoWindow.open(map, markerMyPos);
+              });
+            });
+
+            //Shows marker and info window when user enters ending location
+            google.maps.event.addListener(autocompleteEnd, 'place_changed', function() {
+              infoWindow.close();
+              var place = autocompleteEnd.getPlace();
+              if (place.geometry.viewport) {
+                map.fitBounds(place.geometry.viewport);
+              } else {
+                map.setCenter(place.geometry.location);
+                map.setZoom(15);
+              }
+              markerEnd.setPosition(place.geometry.location);   //Moves the places marker
+              markerEnd.setVisible(true);
+              infoWindow.setContent('<div><strong>' + place.name + '</strong><br>');
+              infoWindow.open(map, markerEnd);
+              google.maps.event.addListener(markerEnd, 'click', function(e) {
+                infoWindow.setContent('<div><strong>' + place.name + '</strong><br>');
+                infoWindow.open(map, markerEnd);
               });
             });
 
@@ -99,21 +205,44 @@
         }
       }
 
-      function handleNoGeolocation(errorFlag) {
-        if (errorFlag) {
-          var content = 'Error: The Geolocation service failed.';
-        } else {
-          var content = 'Error: Your browser doesn\'t support geolocation.';
-        }
+        function handleNoGeolocation(errorFlag) {
+          if (errorFlag) {
+            var content = 'Error: The Geolocation service failed.';
+          } else {
+            var content = 'Error: Your browser doesn\'t support geolocation.';
+          }
+          var options = {
+            map: map,
+            position: new google.maps.LatLng(60, 105),
+            content: content
+          };
 
-        var options = {
-          map: map,
-          position: new google.maps.LatLng(60, 105),
-          content: content
-        };
+          var infowindow = new google.maps.InfoWindow(options);
+          map.setCenter(options.position);
 
-        var infowindow = new google.maps.InfoWindow(options);
-        map.setCenter(options.position);
+          function calcRoute() {
+            var start = document.getElementById('start').value;
+            var end = document.getElementById('end').value;
+            var request = {
+                origin:start,
+                destination:end,
+                travelMode: google.maps.TravelMode.DRIVING
+            };
+
+            var request = {
+              origin: start,
+              destination: end,
+              waypoints: waypts,
+              optimizeWaypoints: true,
+              travelMode: google.maps.TravelMode.DRIVING
+            };
+
+            directionsService.route(request, function(response, status) {
+              if (status == google.maps.DirectionsStatus.OK) {
+                directionsDisplay.setDirections(response);
+              }
+            });
+          }
       }
 
       google.maps.event.addDomListener(window, 'load', initialize);
@@ -121,7 +250,13 @@
     </script>
   </head>
   <body>
-    <input type="text" id="autocomplete">
+    <div id="control">
+      <strong>Start:</strong>
+      <input type="text" id="start" placeholder="Enter starting address" onchange="calcRoute();">
+      <strong>End:</strong>
+      <input type="text" id="end" placeholder="Enter ending address" onchange="calcRoute();">
+    </div>
+    <div id="directions-panel"></div>
     <div id="map-canvas"></div>
   </body>
 </html>
