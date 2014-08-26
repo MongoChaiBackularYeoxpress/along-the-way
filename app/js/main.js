@@ -7,7 +7,3 @@ var mapModel = new MapModel();
 var mapView = new MapView({model: mapModel});
 
 $('#map-canvas').html(mapView.$el);
-
-
-
-
