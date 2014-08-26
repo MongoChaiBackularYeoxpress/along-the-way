@@ -1,11 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>MCBYify</title>
-</head>
-<body>
-  <p>Anything in the html</p>
-  <script src="bundle.js"></script>
-</body>
+<html>
+  <head>
+    <title>Along The Way</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+
+    <script>
+      var map;
+      var marker;
+
+      function initialize() {
+        var mapOptions = {
+          zoom: 15,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+        var acOptions = {
+          types: ['establishment']
+        };
+
+        // Try HTML5 geolocation
+        if(navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+
+            var autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'),acOptions);
+            autocomplete.bindTo('bounds',map);
+            var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            map.setCenter(pos);
+
+            //Option variables for current position marker
+            //Marker color = blue
+            var markerOptionsMyPos = {
+              position: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+              icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+            };
+
+            //Object of current position marker
+            var markerMyPos = new google.maps.Marker(markerOptionsMyPos);
+            markerMyPos.setMap(map);
+
+            //Option variables for info window
+            var infoWindowOptions = {
+              map: map,
+              position: pos,
+              content: 'Your Current Location'
+            };
+
+            //Info window object
+            var infoWindow = new google.maps.InfoWindow(infoWindowOptions);
+
+            //Variables for marker of places
+            //Color of places marker = red
+            var markerOptionsPlace = {
+              position: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+              icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+            };
+            var markerPlace = new google.maps.Marker(markerOptionsPlace);
+            markerPlace.setMap(map);
+
+            //Shows info window when current position marker is clicked
+            google.maps.event.addListener(markerMyPos, 'click', function(e) {
+              infoWindow.open(map, markerMyPos);
+            });
+
+            //Shows marker and info window when user searches for a certain place
+            google.maps.event.addListener(autocomplete, 'place_changed', function() {
+              infoWindow.close();
+              var place = autocomplete.getPlace();
+              if (place.geometry.viewport) {
+                map.fitBounds(place.geometry.viewport);
+              } else {
+                map.setCenter(place.geometry.location);
+                map.setZoom(15);
+              }
+              markerPlace.setPosition(place.geometry.location);   //Moves the places marker
+              infoWindow.setContent('<div><strong>' + place.name + '</strong><br>');
+              infoWindow.open(map, markerPlace);
+              google.maps.event.addListener(markerPlace, 'click', function(e) {
+                infoWindow.open(map, markerPlace);
+              });
+            });
+
+          }, function() {
+            handleNoGeolocation(true);
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleNoGeolocation(false);
+        }
+      }
+
+      function handleNoGeolocation(errorFlag) {
+        if (errorFlag) {
+          var content = 'Error: The Geolocation service failed.';
+        } else {
+          var content = 'Error: Your browser doesn\'t support geolocation.';
+        }
+
+        var options = {
+          map: map,
+          position: new google.maps.LatLng(60, 105),
+          content: content
+        };
+
+        var infowindow = new google.maps.InfoWindow(options);
+        map.setCenter(options.position);
+      }
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <input type="text" id="autocomplete">
+    <div id="map-canvas"></div>
+  </body>
 </html>
