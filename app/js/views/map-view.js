@@ -20,6 +20,7 @@ module.exports = Backbone.View.extend({
     var mapOptions = {
           zoom: 15
         };
+    var directionsDisplay;
 
     if(navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position) {
@@ -72,6 +73,28 @@ module.exports = Backbone.View.extend({
         }
 
         map.setCenter(pos);
+
+        directionsService = new google.maps.DirectionsService();
+        directionsDisplay = new google.maps.DirectionsRenderer();
+
+        var jeffersonGolf = new google.maps.LatLng(47.5662742, -122.3042107);
+        directionsDisplay.setMap(map);
+
+        calcRoute(pos, jeffersonGolf);
+
+        function calcRoute(start, end) {
+          var request = {
+              origin: start,
+              destination: end,
+              travelMode: google.maps.TravelMode.DRIVING
+          };
+          directionsService.route(request, function(response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+
+              directionsDisplay.setDirections(response);
+            }
+          });
+        }
 
       });
     }
