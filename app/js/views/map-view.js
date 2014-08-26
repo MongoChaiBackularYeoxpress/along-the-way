@@ -44,7 +44,7 @@ module.exports = Backbone.View.extend({
         var request = {
           location: pos,
           radius: 500,
-          types: ['store']
+          types: ['bar']
         };
 
         //location points
