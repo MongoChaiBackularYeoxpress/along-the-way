@@ -3,9 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <title>MCBYify</title>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
 </head>
 <body>
-  <p>Anything in the html</p>
+  <article>
+    <section>
+      <h1>Along The Way</h1>
+      <form>
+        Start: <input type="text" name="start" id="start" placeholder="Start"  />
+        Destination: <input type="text" name="destination" id="desination" placeholder="Destination" />
+        Category: <input name="comments" id="category" placeholder="Category"></input>
+        <input type="submit" value="submit!"/>
+
+      </form>
+
+
+
+    </section>
+
+    <section id="map-canvas">
+
+    </section>
+
+
+
+  </article>
   <script src="bundle.js"></script>
 </body>
 </html>
