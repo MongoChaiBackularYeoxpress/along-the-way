@@ -1,5 +1,5 @@
 // Backbone Map Model
-var Backbone = require('Backbone');
+var Backbone = require('backbone');
 Backbone.$ = require('jquery');
 
 module.exports = Backbone.Model.extend({
