@@ -1,9 +1,5 @@
 module.exports = function(grunt){
-	//require('matchdep').filterdev('grunt-*').foreach(grunt.loadNpmTasks);
-	grunt.loadNpmTasks('grunt-contrib-clean');
-	grunt.loadNpmTasks('grunt-contrib-copy');
-	grunt.loadNpmTasks('grunt-browserify');
-	grunt.loadNpmTasks('grunt-mocha');
+	require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
 	grunt.initConfig({
 
@@ -49,9 +45,22 @@ module.exports = function(grunt){
 					run: true
 				}
 			}
+		},
+
+		connect: {
+			dev: {
+				options: {
+					port: 3000,
+					base: 'build',
+					open: true,
+					keepalive: true
+				}
+			}
 		}
+
 	});
 
 	grunt.registerTask('build:dev', ['clean:dev', 'browserify:dev', 'copy:dev']);
 	grunt.registerTask('backbone:test', ['browserify:test', 'mocha:backbonetest']);
+	grunt.registerTask('serve', ['build:dev', 'connect:dev']);
 };
