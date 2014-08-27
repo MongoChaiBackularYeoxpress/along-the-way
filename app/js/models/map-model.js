@@ -21,7 +21,6 @@ module.exports = Backbone.Model.extend({
         navigator.geolocation.getCurrentPosition(function(position) {
           var originPoint = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
           self.set('startPoint', originPoint);
-          console.log(self.get('startPoint'));
         });
       } // todo : err check
     }
@@ -31,16 +30,16 @@ module.exports = Backbone.Model.extend({
   calcRoute: function(start, end, directionsDisplay, directionsService, service) {
     var self = this;
     var request = {
-              origin: start,
-              destination: end,
-              travelMode: google.maps.TravelMode.DRIVING
-          };
+      origin: start,
+      destination: end,
+      travelMode: google.maps.TravelMode.DRIVING
+    };
     directionsService.route(request, function(response, status) {
       if (status == google.maps.DirectionsStatus.OK) {
         var polyline = new google.maps.Polyline({
-                path: [],
-                strokeWeight: 0
-              });
+          path: [],
+          strokeWeight: 0
+        });
         var bounds = new google.maps.LatLngBounds();
         var numCount = 0;
         var legs = response.routes[0].legs;
@@ -51,7 +50,6 @@ module.exports = Backbone.Model.extend({
             for (k=0;k<nextSegment.length;k++) {
               polyline.getPath().push(nextSegment[k]);
               bounds.extend(nextSegment[k]);
-
               self.searchPoint(numCount, polyline, service);
               numCount++;
             }
@@ -60,7 +58,6 @@ module.exports = Backbone.Model.extend({
         var map = self.get('map');
         polyline.setMap(map);
         map.fitBounds(bounds);
-
         directionsDisplay.setDirections(response);
       }
     });
@@ -69,12 +66,11 @@ module.exports = Backbone.Model.extend({
   searchPoint: function(numCount, polyline, service) {
     var self = this;
     if((numCount % 10) == 0){
-      // (function(index){
       var requestLoc = {
-          location: polyline.getPath().getAt(numCount),
-          radius: 500,
-          types: ['bar']
-          // todo types: model.get(category)
+        location: polyline.getPath().getAt(numCount),
+        radius: 500,
+        types: ['bar']
+        // todo types: model.get(category)
       };
       setTimeout(function(){
         service.nearbySearch(requestLoc, function(results, status) {
@@ -102,5 +98,4 @@ module.exports = Backbone.Model.extend({
       infowindow.open(self.get('map'), this);
     });
   }
-
 });

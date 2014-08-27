@@ -16,7 +16,6 @@ module.exports = Backbone.View.extend({
   },
 
   callMapLocations: function(){
-    console.log(this);
     this.mapLocations(this.model);
   },
 
