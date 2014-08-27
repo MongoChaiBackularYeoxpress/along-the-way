@@ -5,130 +5,45 @@ Backbone.$ = require('jquery');
 module.exports = Backbone.View.extend({
 
   initialize: function() {
+    this.model.on('change:startPoint', this.callMapLocations, this);
+    this.createMap(this.model);  
     this.render();
   },
 
   render: function() {
-    this.mapLocations(this.model);
+    this.model.getLocation();
     return this;
   },
 
+  callMapLocations: function(){
+    this.mapLocations(this.model);
+  },
+
+  createMap: function(model){
+    map = new google.maps.Map(document.getElementById('map-canvas'), model.get('mapOptions'));
+    model.set('map', map);
+  },
+
   mapLocations: function(model){
-    var map;
-    var service;
-    var infowindow;
-    var mapOptions = {
-          zoom: 15
-        };
-    var directionsDisplay;
+    var map = model.get('map');
+    var pos = model.get('startPoint');
+    var endPoint = model.get('endPoint');
+    var infowindowOptions = new google.maps.InfoWindow({
+      map: map,
+      position: pos,
+      content: 'Your location.'
+    });
+    model.set('infowindow', infowindowOptions);
 
-    if(navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
+    var service = new google.maps.places.PlacesService(map);
 
-        map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    map.setCenter(pos);
 
-        model.set('map', map);
+    var directionsService = new google.maps.DirectionsService();
+    var directionsDisplay = new google.maps.DirectionsRenderer();
 
-        // if position is inputed from form, else current location
-        if(model.get('position')){
-          var pos = model.get('position');
-        } else {
-          var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-        }
+    directionsDisplay.setMap(map);
 
-        infowindow = new google.maps.InfoWindow({
-          map: map,
-          position: pos,
-          content: 'Location found using HTML5.'
-        });
-
-        //location points
-        service = new google.maps.places.PlacesService(map);
-
-        map.setCenter(pos);
-
-        directionsService = new google.maps.DirectionsService();
-        directionsDisplay = new google.maps.DirectionsRenderer();
-
-        var interurban = new google.maps.LatLng(45.5500806, -122.6767286);
-        directionsDisplay.setMap(map);
-
-        calcRoute(pos, interurban);
-
-        function calcRoute(start, end) {
-          var request = {
-              origin: start,
-              destination: end,
-              travelMode: google.maps.TravelMode.DRIVING
-          };
-          directionsService.route(request, function(response, status) {
-            if (status == google.maps.DirectionsStatus.OK) {
-              var polyline = new google.maps.Polyline({
-                path: [],
-                strokeWeight: 0
-              });
-
-              var bounds = new google.maps.LatLngBounds();
-              var numCount = 0;
-              var legs = response.routes[0].legs;
-              for (i=0;i<legs.length;i++) {
-                var steps = legs[i].steps;
-                for (j=0;j<steps.length;j++) {
-                  var nextSegment = steps[j].path;
-                  for (k=0;k<nextSegment.length;k++) {
-                    polyline.getPath().push(nextSegment[k]);
-                    bounds.extend(nextSegment[k]);
-
-                    if((numCount % 10) == 0){
-                      (function(index) {
-                        var requestLoc = {
-                          location: polyline.getPath().getAt(index),
-                          radius: 500,
-                          types: ['bar']
-                        };
-                        setTimeout(function(){
-                          service.nearbySearch(requestLoc, callback);
-                        }, numCount * 10);
-
-                      })(numCount);
-                    }
-                    numCount++;
-                  }
-                }
-              }
-
-              polyline.setMap(map);
-              map.fitBounds(bounds);
-
-              directionsDisplay.setDirections(response);
-            }
-          });
-        }
-
-        function callback(results, status) {
-          if (status == google.maps.places.PlacesServiceStatus.OK) {
-            for (var i = 0; i < results.length; i++) {
-              createMarker(results[i]);
-            }
-          }
-        }
-
-        function createMarker(place) {
-          var placeLoc = place.geometry.location;
-          var marker = new google.maps.Marker({
-            map: map,
-            animation: google.maps.Animation.DROP,
-            position: place.geometry.location
-          });
-          google.maps.event.addListener(marker, 'click', function() {
-            infowindow.setContent(place.name);
-            infowindow.open(map, this);
-          });
-        }
-
-
-      });
-    }
+    model.calcRoute(pos, endPoint, directionsDisplay, directionsService, service);
   }
-
 });
