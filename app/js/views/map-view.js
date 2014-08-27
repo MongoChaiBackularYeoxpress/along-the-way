@@ -69,25 +69,51 @@ module.exports = Backbone.View.extend({
               });
 
               var bounds = new google.maps.LatLngBounds();
-
+              var numCount = 0;
               var legs = response.routes[0].legs;
               for (i=0;i<legs.length;i++) {
                 var steps = legs[i].steps;
                 for (j=0;j<steps.length;j++) {
                   var nextSegment = steps[j].path;
                   for (k=0;k<nextSegment.length;k++) {
-                    (function(l){
-                      polyline.getPath().push(nextSegment[l]);
-                      bounds.extend(nextSegment[l]);
-                      var requestLoc = {
-                        location: nextSegment[l],
-                        radius: 500,
-                        types: ['bar']
-                      };
 
-                      service.nearbySearch(requestLoc, callback);
-                    })(k);
-                  }
+                      polyline.getPath().push(nextSegment[k]);
+                      bounds.extend(nextSegment[k]);
+
+                      if((k % 10) == 0){
+                        (function(index) {
+                          var requestLoc = {
+                            location: polyline.getPath().getAt(index),
+                            radius: 500,
+                            types: ['bar']
+                          };
+                          //console.log(polyline.getPath().getAt(index));
+                          setTimeout(function(){
+                            service.nearbySearch(requestLoc, callback);
+                          }, k*100);
+
+                        })(k);
+                      }
+                      numCount++;
+                      //console.log(func);
+                }
+
+                  // var requestLoc = {
+                  //     location: nextSegment[1],
+                  //     radius: 500,
+                  //     types: ['bar']
+                  //   };
+                  //   console.log(requestLoc);
+                  //   service.nearbySearch(requestLoc, callback);
+
+                  //   var requestLoc2 = {
+                  //     location: nextSegment[15],
+                  //     radius: 500,
+                  //     types: ['bar']
+                  //   };
+                  //   console.log(nextSegment[15]);
+                  //   console.log(requestLoc2);
+                  //   service.nearbySearch(requestLoc2, callback);
                 }
               }
 
