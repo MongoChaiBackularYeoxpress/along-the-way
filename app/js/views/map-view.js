@@ -50,10 +50,10 @@ module.exports = Backbone.View.extend({
         directionsService = new google.maps.DirectionsService();
         directionsDisplay = new google.maps.DirectionsRenderer();
 
-        var jeffersonGolf = new google.maps.LatLng(47.5662742, -122.3042107);
+        var interurban = new google.maps.LatLng(45.5500806, -122.6767286);
         directionsDisplay.setMap(map);
 
-        calcRoute(pos, jeffersonGolf);
+        calcRoute(pos, interurban);
 
         function calcRoute(start, end) {
           var request = {
@@ -76,44 +76,24 @@ module.exports = Backbone.View.extend({
                 for (j=0;j<steps.length;j++) {
                   var nextSegment = steps[j].path;
                   for (k=0;k<nextSegment.length;k++) {
+                    polyline.getPath().push(nextSegment[k]);
+                    bounds.extend(nextSegment[k]);
 
-                      polyline.getPath().push(nextSegment[k]);
-                      bounds.extend(nextSegment[k]);
+                    if((numCount % 10) == 0){
+                      (function(index) {
+                        var requestLoc = {
+                          location: polyline.getPath().getAt(index),
+                          radius: 500,
+                          types: ['bar']
+                        };
+                        setTimeout(function(){
+                          service.nearbySearch(requestLoc, callback);
+                        }, numCount * 10);
 
-                      if((k % 10) == 0){
-                        (function(index) {
-                          var requestLoc = {
-                            location: polyline.getPath().getAt(index),
-                            radius: 500,
-                            types: ['bar']
-                          };
-                          //console.log(polyline.getPath().getAt(index));
-                          setTimeout(function(){
-                            service.nearbySearch(requestLoc, callback);
-                          }, k*100);
-
-                        })(k);
-                      }
-                      numCount++;
-                      //console.log(func);
-                }
-
-                  // var requestLoc = {
-                  //     location: nextSegment[1],
-                  //     radius: 500,
-                  //     types: ['bar']
-                  //   };
-                  //   console.log(requestLoc);
-                  //   service.nearbySearch(requestLoc, callback);
-
-                  //   var requestLoc2 = {
-                  //     location: nextSegment[15],
-                  //     radius: 500,
-                  //     types: ['bar']
-                  //   };
-                  //   console.log(nextSegment[15]);
-                  //   console.log(requestLoc2);
-                  //   service.nearbySearch(requestLoc2, callback);
+                      })(numCount);
+                    }
+                    numCount++;
+                  }
                 }
               }
 
