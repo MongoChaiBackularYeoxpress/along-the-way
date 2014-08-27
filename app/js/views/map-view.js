@@ -29,11 +29,12 @@ module.exports = Backbone.View.extend({
     var map = model.get('map');
     var pos = model.get('startPoint');
     var endPoint = model.get('endPoint');
-    // var infowindow = new google.maps.InfoWindow({
-    //   map: map,
-    //   position: pos,
-    //   content: 'Location found using HTML5.'
-    // });
+    var infowindowOptions = new google.maps.InfoWindow({
+      map: map,
+      position: pos,
+      content: 'Your location.'
+    });
+    model.set('infowindow', infowindowOptions);
 
     var service = new google.maps.places.PlacesService(map);
 

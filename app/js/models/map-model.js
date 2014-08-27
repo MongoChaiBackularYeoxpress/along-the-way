@@ -11,6 +11,7 @@ module.exports = Backbone.Model.extend({
     category:'',
     position:'',
     mapOptions: {zoom: 15},
+    infowindow:'',
   },
 
   getLocation: function(){
@@ -69,40 +70,37 @@ module.exports = Backbone.Model.extend({
     var self = this;
     if((numCount % 10) == 0){
       // (function(index){
-        var requestLoc = {
-            location: polyline.getPath().getAt(numCount),
-            radius: 500,
-            types: ['bar']
-            // todo types: model.get(category)
-        };
-        setTimeout(function(){
-          service.nearbySearch(requestLoc, function(results, status) {
-            if (status == google.maps.places.PlacesServiceStatus.OK) {
-              for (var i = 0; i < results.length; i++) {
-                self.createMarker(results[i]);
-              }
+      var requestLoc = {
+          location: polyline.getPath().getAt(numCount),
+          radius: 500,
+          types: ['bar']
+          // todo types: model.get(category)
+      };
+      setTimeout(function(){
+        service.nearbySearch(requestLoc, function(results, status) {
+          if (status == google.maps.places.PlacesServiceStatus.OK) {
+            for (var i = 0; i < results.length; i++) {
+              self.createMarker(results[i]);
             }
-          });
-        }, numCount * 10);
-      // })(numCount);
+          }
+        });
+      }, numCount * 10);
     }
   },
 
   createMarker: function(place, model) {
     var self = this;
-    // console.log(self);
+    var infowindow = self.get('infowindow');
     var placeLoc = place.geometry.location;
     var marker = new google.maps.Marker({
       map: self.get('map'),
       animation: google.maps.Animation.DROP,
       position: place.geometry.location
     });
-    // console.log(marker);
-    // google.maps.event.addListener(marker, 'click', function() {
-    //   this.infowindow.setContent(place.name);
-    //   this.infowindow.open(self.map, this);
-    // });
+    google.maps.event.addListener(marker, 'click', function() {
+      infowindow.setContent(place.name);
+      infowindow.open(self.get('map'), this);
+    });
   }
 
-  // startingPoint: function (start){}
 });
