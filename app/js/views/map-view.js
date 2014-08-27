@@ -20,6 +20,7 @@ module.exports = Backbone.View.extend({
     var mapOptions = {
           zoom: 15
         };
+    var directionsDisplay;
 
     if(navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position) {
@@ -41,15 +42,68 @@ module.exports = Backbone.View.extend({
           content: 'Location found using HTML5.'
         });
 
-        var request = {
-          location: pos,
-          radius: 500,
-          types: ['bar']
-        };
-
         //location points
         service = new google.maps.places.PlacesService(map);
-        service.nearbySearch(request, callback);
+
+        map.setCenter(pos);
+
+        directionsService = new google.maps.DirectionsService();
+        directionsDisplay = new google.maps.DirectionsRenderer();
+
+        var interurban = new google.maps.LatLng(45.5500806, -122.6767286);
+        directionsDisplay.setMap(map);
+
+        calcRoute(pos, interurban);
+
+        function calcRoute(start, end) {
+          var request = {
+              origin: start,
+              destination: end,
+              travelMode: google.maps.TravelMode.DRIVING
+          };
+          directionsService.route(request, function(response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+              var polyline = new google.maps.Polyline({
+                path: [],
+                strokeWeight: 0
+              });
+
+              var bounds = new google.maps.LatLngBounds();
+              var numCount = 0;
+              var legs = response.routes[0].legs;
+              for (i=0;i<legs.length;i++) {
+                var steps = legs[i].steps;
+                for (j=0;j<steps.length;j++) {
+                  var nextSegment = steps[j].path;
+                  for (k=0;k<nextSegment.length;k++) {
+                    polyline.getPath().push(nextSegment[k]);
+                    bounds.extend(nextSegment[k]);
+
+                    if((numCount % 10) == 0){
+                      (function(index) {
+                        var requestLoc = {
+                          location: polyline.getPath().getAt(index),
+                          radius: 500,
+                          types: ['bar']
+                        };
+                        setTimeout(function(){
+                          service.nearbySearch(requestLoc, callback);
+                        }, numCount * 10);
+
+                      })(numCount);
+                    }
+                    numCount++;
+                  }
+                }
+              }
+
+              polyline.setMap(map);
+              map.fitBounds(bounds);
+
+              directionsDisplay.setDirections(response);
+            }
+          });
+        }
 
         function callback(results, status) {
           if (status == google.maps.places.PlacesServiceStatus.OK) {
@@ -63,6 +117,7 @@ module.exports = Backbone.View.extend({
           var placeLoc = place.geometry.location;
           var marker = new google.maps.Marker({
             map: map,
+            animation: google.maps.Animation.DROP,
             position: place.geometry.location
           });
           google.maps.event.addListener(marker, 'click', function() {
@@ -71,7 +126,6 @@ module.exports = Backbone.View.extend({
           });
         }
 
-        map.setCenter(pos);
 
       });
     }
