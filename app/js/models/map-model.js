@@ -8,10 +8,10 @@ module.exports = Backbone.Model.extend({
     startPoint: '',
     endPoint: '',
     map: '',
-    category:'',
-    position:'',
+    category: '',
+    position: '',
     mapOptions: {zoom: 15},
-    infowindow:'',
+    infowindow: '',
   },
 
   getLocation: function(){

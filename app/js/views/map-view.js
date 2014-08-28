@@ -6,6 +6,7 @@ module.exports = Backbone.View.extend({
 
   initialize: function() {
     this.model.on('change:startPoint', this.callMapLocations, this);
+    this.model.on('change:endPoint', this.callMapLocations, this);
     this.createMap(this.model);  
     this.render();
   },
