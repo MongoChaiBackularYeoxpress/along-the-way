@@ -10,7 +10,7 @@ module.exports = Backbone.View.extend({
     this.model.on('change:category', this.callMapLocations, this);
     this.model.on('change:radius', this.callMapLocations, this);
     this.model.getLocation();
-    this.generateMap(this.model);  
+    this.generateMap(this.model);
     this.render();
   },
 
@@ -26,7 +26,7 @@ module.exports = Backbone.View.extend({
     model.set('map', '');
     map = new google.maps.Map(document.getElementById('map-canvas'), model.get('mapOptions'));
     model.set('map', map);
-    console.log(map);
+    this.autoComplete();
     var pos = model.get('startPoint');
     var endPoint = model.get('endPoint');
     var infowindowOptions = new google.maps.InfoWindow({
@@ -47,5 +47,11 @@ module.exports = Backbone.View.extend({
 
     model.calcRoute(pos, endPoint, directionsDisplay, directionsService, service);
   },
-
+  autoComplete: function () {
+    var acOptions = {
+      types: ['establishment']
+    };
+    var autoCompleteStart = new google.maps.places.Autocomplete(document.getElementById('start'), acOptions);
+    var autoCompleteEnd = new google.maps.places.Autocomplete(document.getElementById('destination'), acOptions);
+  }
 });
