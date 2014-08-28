@@ -7,26 +7,24 @@ module.exports = Backbone.View.extend({
   initialize: function() {
     this.model.on('change:startPoint', this.callMapLocations, this);
     this.model.on('change:endPoint', this.callMapLocations, this);
-    this.createMap(this.model);  
+    this.model.getLocation();
+    this.generateMap(this.model);  
     this.render();
   },
 
   render: function() {
-    this.model.getLocation();
     return this;
   },
 
   callMapLocations: function(){
-    this.mapLocations(this.model);
+    this.generateMap(this.model);
   },
 
-  createMap: function(model){
+  generateMap: function(model){
+    model.set('map', '');
     map = new google.maps.Map(document.getElementById('map-canvas'), model.get('mapOptions'));
     model.set('map', map);
-  },
-
-  mapLocations: function(model){
-    var map = model.get('map');
+    console.log(map);
     var pos = model.get('startPoint');
     var endPoint = model.get('endPoint');
     var infowindowOptions = new google.maps.InfoWindow({
@@ -46,5 +44,6 @@ module.exports = Backbone.View.extend({
     directionsDisplay.setMap(map);
 
     model.calcRoute(pos, endPoint, directionsDisplay, directionsService, service);
-  }
+  },
+
 });

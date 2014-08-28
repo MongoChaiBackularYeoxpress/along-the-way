@@ -12,6 +12,7 @@ module.exports = Backbone.Model.extend({
     position: '',
     mapOptions: {zoom: 15},
     infowindow: '',
+    markerArray: []
   },
 
   getLocation: function(){
@@ -24,7 +25,6 @@ module.exports = Backbone.Model.extend({
         });
       } // todo : err check
     }
-    self.set('endPoint', new google.maps.LatLng(45.5500806, -122.6767286));
   },
 
   calcRoute: function(start, end, directionsDisplay, directionsService, service) {
