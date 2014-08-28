@@ -8,7 +8,7 @@ module.exports = Backbone.Model.extend({
     startPoint: '',
     endPoint: '',
     map: '',
-    category: '',
+    category: 'bar',
     position: '',
     mapOptions: {zoom: 15},
     infowindow: '',
@@ -65,12 +65,12 @@ module.exports = Backbone.Model.extend({
 
   searchPoint: function(numCount, polyline, service) {
     var self = this;
+    var cat = self.get('category');
     if((numCount % 10) == 0){
       var requestLoc = {
         location: polyline.getPath().getAt(numCount),
         radius: 500,
-        types: ['bar']
-        // todo types: model.get(category)
+        types: [cat]
       };
       setTimeout(function(){
         service.nearbySearch(requestLoc, function(results, status) {
