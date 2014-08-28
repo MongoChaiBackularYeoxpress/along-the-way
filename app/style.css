@@ -1,0 +1,9 @@
+#map-canvas {
+  height: 500px;
+}
+#form-bar {
+  background-color: white;
+}
+.something input, select {
+  display: block;
+}
