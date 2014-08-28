@@ -8,30 +8,26 @@
       html, body, #map-canvas {
         height: 800px;
         margin: 0px;
-        padding: 0px
+        padding: 0px;
+      }
+      #form-bar { 
+        position:absolute;
+        top: 10px;
+        left: 150px;
+        z-index: 99;
+        height: 100px;
       }
     </style>
 </head>
 <body>
   <article>
-    <section>
-      <h1>Along The Way</h1>
-      <form>
-        Start: <input type="text" name="start" id="start" placeholder="Start"  />
-        Destination: <input type="text" name="destination" id="desination" placeholder="Destination" />
-        Category: <input name="comments" id="category" placeholder="Category"></input>
-        <input type="submit" value="submit!"/>
 
-      </form>
-
-
-
+    <section id="form-bar">
     </section>
-
     <section id="map-canvas">
-
     </section>
 
+      
 
 
   </article>
