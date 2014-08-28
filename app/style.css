@@ -5,5 +5,27 @@
   background-color: white;
 }
 .something input, select {
-  display: block;
+  display: inline;
+  padding: .25em;
+}
+
+
+
+@media (max-width: 450px) {
+  .something input, select, button {
+    display: block;
+    width: 93%;
+    margin: 1.25em;
+  }
+
+input, button {
+  border-radius: 5px;
+}
+
+select, button{
+  height: 1.9em;
+  background-color: white;
+  width: 95%;
+}
+
 }
