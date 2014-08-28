@@ -26,7 +26,9 @@ module.exports = Backbone.View.extend({
     var start = this.$el.find('#start').val();
     var end = this.$el.find('#destination').val();
     var cat = this.$el.find('#category').val();
+    var radius = parseInt(this.$el.find('#radius').val());
     self.model.set('category', cat);
+    self.model.set('radius', radius);
     console.log(start);
     if (start !== 'Start') {
       geocoder.geocode( { 'address': start}, function(results, status) {

@@ -7,6 +7,7 @@ module.exports = Backbone.Model.extend({
   defaults: {
     startPoint: '',
     endPoint: '',
+    radius: 402,
     map: '',
     category: 'bar',
     position: '',
@@ -66,10 +67,11 @@ module.exports = Backbone.Model.extend({
   searchPoint: function(numCount, polyline, service) {
     var self = this;
     var cat = self.get('category');
+    var rad = self.get('radius');
     if((numCount % 10) == 0){
       var requestLoc = {
         location: polyline.getPath().getAt(numCount),
-        radius: 500,
+        radius: [rad],
         types: [cat]
       };
       setTimeout(function(){

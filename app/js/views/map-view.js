@@ -8,6 +8,7 @@ module.exports = Backbone.View.extend({
     this.model.on('change:startPoint', this.callMapLocations, this);
     this.model.on('change:endPoint', this.callMapLocations, this);
     this.model.on('change:category', this.callMapLocations, this);
+    this.model.on('change:radius', this.callMapLocations, this);
     this.model.getLocation();
     this.generateMap(this.model);  
     this.render();
