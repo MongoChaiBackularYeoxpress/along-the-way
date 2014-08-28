@@ -1,0 +1,59 @@
+
+article {
+  margin: 1em;
+}
+
+/*.map-container {
+  position: relative;
+  padding-top: 30px;
+  overflow: hidden;
+  height: auto;
+  width: 100%;
+  position: absolute;
+  z-index: 1;
+}*/
+
+/*IF YOU CHANGE THIS THE MAP CONTAINER WILL RESPOND TO THE SIZE.*/
+#map-canvas {
+  height: 500px;
+  margin: 0px;
+  padding: 0px
+}
+section {
+  width: 100%;
+  margin-right: 1em;
+
+}
+.hideNav {
+  display: none;
+  background-color: blue;
+  width: 20em;
+}
+
+.formItem {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.formCont{
+  /*display: flex;*/
+  /*flex-flow: column nowrap;*/
+  z-index: 2;
+  position: absolute;
+  background-color: white;
+  width: 100%;
+}
+
+.formItem label {
+  padding: 0 1em;
+  margin: .2em 1em;
+  text-align: right;
+  width: 15%;
+}
+
+.formItem input {
+  width: 50%;
+
+}
+
+
