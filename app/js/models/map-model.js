@@ -3,14 +3,14 @@ var Backbone = require('backbone');
 Backbone.$ = require('jquery');
 
 module.exports = Backbone.Model.extend({
-  
+
   defaults: {
     startPoint: '',
     endPoint: '',
     map: '',
     category:'',
     position:'',
-    mapOptions: {zoom: 15},
+    mapOptions: {zoom: 15, panControl: false},
     infowindow:'',
   },
 
