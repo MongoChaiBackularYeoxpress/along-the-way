@@ -90,10 +90,12 @@ module.exports = Backbone.Model.extend({
     var self = this;
     var infowindow = self.get('infowindow');
     var placeLoc = place.geometry.location;
+    var image = "./mcby-marker-icon.png";
     var marker = new google.maps.Marker({
       map: self.get('map'),
       animation: google.maps.Animation.DROP,
-      position: place.geometry.location
+      position: place.geometry.location,
+      icon: image
     });
     google.maps.event.addListener(marker, 'click', function() {
       infowindow.setContent(place.name);
