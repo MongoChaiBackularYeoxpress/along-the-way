@@ -5,21 +5,18 @@ Backbone.$ = require('jquery');
 module.exports = Backbone.View.extend({
 
   initialize: function() {
-    this.model.on('change:startPoint', this.callMapLocations, this);
-    this.model.on('change:endPoint', this.callMapLocations, this);
-    this.model.on('change:category', this.callMapLocations, this);
-    this.model.on('change:radius', this.callMapLocations, this);
+    this.model.on('change:startPoint', this.render, this);
+    this.model.on('change:endPoint', this.render, this);
+    this.model.on('change:category', this.render, this);
+    this.model.on('change:radius', this.render, this);
     this.model.getLocation();
     this.generateMap(this.model);
     this.render();
   },
 
-  render: function() {
-    return this;
-  },
-
-  callMapLocations: function(){
+  render: function(){
     this.generateMap(this.model);
+    return this;
   },
 
   generateMap: function(model){
