@@ -1,31 +1,93 @@
 #map-canvas {
-  height: 500px;
+  height: 650px;
+  width:100%;
 }
 #form-bar {
   background-color: white;
 }
-.something input, select {
+input {
+    height: 3em;
+    border-radius: 3px;
+    display: inline;
+    margin: 1.25em;
+    width: 15em;
+  }
+
+  select {
+    height: 3em;
+    background-color: white;
+    display: inline;
+    margin: 1.25em;
+    width: 15em;
+  }
+
+  button {
+    height: 3em;
+    background-color: white;
+    border-radius: 5px;
+    display: inline;
+    margin: 1.25em;
+    width: 15em;
+  }
+
+h1{
+  font-size: 4em;
   display: inline;
-  padding: .25em;
+  margin-left: 1.5em;
+}
+.img img{
+  width: 5em;
+  display: inline;
+  margin-left: 1.5em;
+}
+
+@media (max-width: 500px) {
+  /*.something {
+    display: block;
+    margin: 1.25em;
+  }*/
+.img img{
+  width: 2em;
+  display: inline;
+  margin-left: 2em;
+}
+
+h1{
+  font-size: 2em;
+  display: inline;
+  margin-left: 2em;
 }
 
 
-
-@media (max-width: 450px) {
-  .something input, select, button {
+  input {
+    height: 3em;
+    border-radius: 5px;
     display: block;
-    width: 93%;
+    width: 94%;
     margin: 1.25em;
   }
 
-input, button {
-  border-radius: 5px;
-}
+  select {
+    height: 3em;
+    background-color: white;
+    display: block;
+    width: 95%;
+    margin: 1.25em;
+  }
 
-select, button{
-  height: 1.9em;
-  background-color: white;
-  width: 95%;
-}
+  button {
+    height: 3em;
+    background-color: white;
+    border-radius: 5px;
+    display: block;
+    width: 95%;
+    margin: 1.25em;
+  }
+
+
+  #map-canvas {
+    height: 500px;
+  }
+
 
 }
