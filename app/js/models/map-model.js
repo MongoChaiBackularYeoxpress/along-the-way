@@ -24,7 +24,7 @@ module.exports = Backbone.Model.extend({
           var originPoint = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
           self.set('startPoint', originPoint);
         });
-      } // todo : err check
+      } 
     }
   },
 
@@ -42,26 +42,36 @@ module.exports = Backbone.Model.extend({
           strokeWeight: 0
         });
         var bounds = new google.maps.LatLngBounds();
-        var numCount = 0;
-        var legs = response.routes[0].legs;
-        for (i=0;i<legs.length;i++) {
-          var steps = legs[i].steps;
-          for (j=0;j<steps.length;j++) {
-            var nextSegment = steps[j].path;
-            for (k=0;k<nextSegment.length;k++) {
-              polyline.getPath().push(nextSegment[k]);
-              bounds.extend(nextSegment[k]);
-              self.searchPoint(numCount, polyline, service);
-              numCount++;
-            }
-          }
-        }
+        self.buildSegments(polyline, bounds, service, response);
         var map = self.get('map');
         polyline.setMap(map);
         map.fitBounds(bounds);
         directionsDisplay.setDirections(response);
       }
     });
+  },
+
+  buildSegments: function(polyline, bounds, service, response) {
+    var self = this;
+    var numCount = 0;
+    var legs = response.routes[0].legs;
+    for (var i = 0; i < legs.length; i++) {
+      var steps = legs[i].steps;
+      for (var j = 0; j < steps.length; j++) {
+        var nextSegment = steps[j].path;
+        self.extendBounds(nextSegment, polyline, bounds, numCount, service);
+      }
+    }
+  },
+
+  extendBounds: function(nextSegment, polyline, bounds, numCount, service) {
+    var self = this;
+    for (var k = 0; k < nextSegment.length; k++) {
+      polyline.getPath().push(nextSegment[k]);
+      bounds.extend(nextSegment[k]);
+      self.searchPoint(numCount, polyline, service);
+      numCount++;
+    }
   },
 
   searchPoint: function(numCount, polyline, service) {
