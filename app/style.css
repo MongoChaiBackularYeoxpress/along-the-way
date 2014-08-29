@@ -50,7 +50,7 @@ input {
   }
 
   select {
-    height: 3em;
+    height: 3.4em;
     background-color: white;
     border: solid 1px #ddd;
     display: inline;
@@ -60,7 +60,7 @@ input {
   }
 
   button {
-    height: 3em;
+    height: 3.4em;
     background-color: white;
     border: solid 1px #ddd;
     border-radius: 5px;
@@ -109,7 +109,6 @@ h1{
   }
 
   select {
-    height: 3em;
     background-color: white;
     display: block;
     width: 95%;
@@ -117,7 +116,6 @@ h1{
   }
 
   button {
-    height: 3em;
     background-color: white;
     border-radius: 5px;
     display: block;
